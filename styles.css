@@ -126,9 +126,16 @@ body {
 }
 
 /* ===== Project cards hover ===== */
+/* Por defecto visible — GSAP se encarga de animar la entrada.
+   Si JS no carga o falla, el contenido sigue siendo accesible. */
 .project-card {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Cuando GSAP está listo, marca los cards para animar */
+html.gsap-ready .project-card {
     opacity: 0;
-    transform: translateY(60px);
 }
 
 .project-visual {
@@ -140,6 +147,7 @@ body {
     position: absolute;
     inset: 0;
     background: linear-gradient(180deg, transparent 60%, rgba(10, 10, 15, 0.5));
+    pointer-events: none;
     pointer-events: none;
 }
 

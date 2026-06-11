@@ -9,6 +9,9 @@
 (function () {
     'use strict';
 
+    // Marcar que GSAP está listo (CSS hace visibles los cards solo si esto pasa)
+    document.documentElement.classList.add('gsap-ready');
+
     // === 1. LOADER ===
     const loader = document.getElementById('loader');
     const loaderBar = document.getElementById('loader-bar');
@@ -26,7 +29,6 @@
             clearInterval(loaderInterval);
             setTimeout(() => {
                 loader.classList.add('hidden');
-                // Disparar animaciones del hero después del loader
                 animateHero();
             }, 400);
         }
@@ -46,7 +48,6 @@
     requestAnimationFrame(raf);
 
     // Integrar Lenis con GSAP ScrollTrigger
-    lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((time) => lenis.raf(time * 1000));
     gsap.ticker.lagSmoothing(0);
 
@@ -54,140 +55,81 @@
     function animateHero() {
         const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
 
-        tl.to('.hero-badge', {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-        })
-        .to('.hero-line', {
-            y: 0,
-            duration: 1.2,
-            stagger: 0.1,
-        }, '-=0.4')
-        .to('.hero-sub', {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-        }, '-=0.6')
-        .to('.hero-cta', {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-        }, '-=0.7')
-        .to('.hero-scroll', {
-            opacity: 1,
-            duration: 0.8,
-        }, '-=0.4');
+        tl.to('.hero-badge', { opacity: 1, y: 0, duration: 0.8 })
+          .to('.hero-line', { y: 0, duration: 1.2, stagger: 0.1 }, '-=0.4')
+          .to('.hero-sub', { opacity: 1, y: 0, duration: 1 }, '-=0.6')
+          .to('.hero-cta', { opacity: 1, y: 0, duration: 1 }, '-=0.7')
+          .to('.hero-scroll', { opacity: 1, duration: 0.8 }, '-=0.4');
     }
 
-    // === 4. GSAP SCROLL - About, Projects, Skills, Contact ===
+    // === 4. GSAP SCROLL - Animaciones de las secciones ===
 
     // Registrar ScrollTrigger
     gsap.registerPlugin(ScrollTrigger);
 
+    // Si Lenis está activo, sincronizar
+    if (typeof lenis !== 'undefined') {
+        lenis.on('scroll', ScrollTrigger.update);
+    }
+
     // About text
     gsap.from('.about-text', {
-        scrollTrigger: {
-            trigger: '.about-text',
-            start: 'top 80%',
-            toggleActions: 'play none none reverse',
-        },
-        opacity: 0,
-        y: 60,
-        duration: 1,
-        ease: 'power3.out',
+        scrollTrigger: { trigger: '.about-text', start: 'top 85%' },
+        opacity: 0, y: 60, duration: 1, ease: 'power3.out',
     });
 
-    // About stats (stagger)
+    // About stats
     gsap.from('.about-stat', {
-        scrollTrigger: {
-            trigger: '.about-stats',
-            start: 'top 80%',
-            toggleActions: 'play none none reverse',
-        },
-        opacity: 0,
-        y: 40,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: 'power3.out',
+        scrollTrigger: { trigger: '.about-stats', start: 'top 85%' },
+        opacity: 0, y: 40, duration: 0.8, stagger: 0.1, ease: 'power3.out',
     });
 
     // Projects header
     gsap.from('.projects-header', {
-        scrollTrigger: {
-            trigger: '.projects-header',
-            start: 'top 80%',
-            toggleActions: 'play none none reverse',
-        },
-        opacity: 0,
-        y: 40,
-        duration: 1,
-        ease: 'power3.out',
+        scrollTrigger: { trigger: '.projects-header', start: 'top 85%' },
+        opacity: 0, y: 40, duration: 1, ease: 'power3.out',
     });
 
-    // Project cards (cada una con su propio trigger)
-    document.querySelectorAll('.project-card').forEach((card, i) => {
-        gsap.to(card, {
-            scrollTrigger: {
-                trigger: card,
-                start: 'top 85%',
-                toggleActions: 'play none none reverse',
-            },
-            opacity: 1,
-            y: 0,
-            duration: 1.2,
-            ease: 'power3.out',
-        });
+    // Project cards (CRÍTICO: usarmos "from" y "to" para que se hagan visibles)
+    document.querySelectorAll('.project-card').forEach((card) => {
+        gsap.fromTo(card,
+            { opacity: 0, y: 60 },
+            {
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 90%',
+                    toggleActions: 'play none none none',
+                },
+                opacity: 1,
+                y: 0,
+                duration: 1.2,
+                ease: 'power3.out',
+            }
+        );
     });
 
     // Skills header
     gsap.from('.skills-header', {
-        scrollTrigger: {
-            trigger: '.skills-header',
-            start: 'top 80%',
-            toggleActions: 'play none none reverse',
-        },
-        opacity: 0,
-        y: 40,
-        duration: 1,
-        ease: 'power3.out',
+        scrollTrigger: { trigger: '.skills-header', start: 'top 85%' },
+        opacity: 0, y: 40, duration: 1, ease: 'power3.out',
     });
 
-    // Skills grid (stagger desde el centro)
+    // Skills grid
     gsap.from('.skill-item', {
-        scrollTrigger: {
-            trigger: '.skills-grid',
-            start: 'top 80%',
-            toggleActions: 'play none none reverse',
-        },
-        opacity: 0,
-        y: 50,
-        scale: 0.9,
-        duration: 0.7,
-        stagger: {
-            amount: 0.5,
-            from: 'start',
-        },
+        scrollTrigger: { trigger: '.skills-grid', start: 'top 85%' },
+        opacity: 0, y: 50, scale: 0.9, duration: 0.7,
+        stagger: { amount: 0.5, from: 'start' },
         ease: 'back.out(1.2)',
     });
 
     // Contact
     gsap.from('.contact-content > *', {
-        scrollTrigger: {
-            trigger: '.contact-content',
-            start: 'top 80%',
-            toggleActions: 'play none none reverse',
-        },
-        opacity: 0,
-        y: 30,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'power3.out',
+        scrollTrigger: { trigger: '.contact-content', start: 'top 85%' },
+        opacity: 0, y: 30, duration: 0.8, stagger: 0.15, ease: 'power3.out',
     });
 
     // === 5. NAV SCROLL BEHAVIOR ===
     const nav = document.getElementById('nav');
-    let lastScroll = 0;
 
     lenis.on('scroll', ({ scroll }) => {
         if (scroll > 100) {
@@ -228,4 +170,16 @@
             }
         });
     });
+
+    // === 8. SAFETY NET ===
+    // Si después de 3 segundos los cards siguen invisibles, forzamos visible
+    setTimeout(() => {
+        document.querySelectorAll('.project-card').forEach((card) => {
+            const computed = window.getComputedStyle(card);
+            if (parseFloat(computed.opacity) < 0.1) {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }
+        });
+    }, 3000);
 })();
