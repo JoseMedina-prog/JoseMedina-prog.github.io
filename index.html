@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Jose David Medina — Full Stack Developer Junior. Portafolio con proyectos modernos, animaciones fluidas y diseño cuidado." />
+    <meta name="theme-color" content="#0a0a0f" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Jose David Medina — Full Stack Developer" />
+    <meta property="og:description" content="Full Stack Developer Junior · Cali, Colombia" />
+    <meta property="og:type" content="website" />
+
+    <title>Jose David Medina · Full Stack Developer</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👨‍💻</text></svg>" />
+
+    <!-- Google Fonts: Inter (texto) + Space Grotesk (display) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind CDN (para que funcione sin build) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        display: ['"Space Grotesk"', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        ink: '#0a0a0f',
+                        accent: {
+                            violet: '#8b5cf6',
+                            cyan: '#06b6d4',
+                            pink: '#ec4899',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lenis (smooth scroll) -->
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.42/bundled/lenis.min.js"></script>
+
+    <!-- GSAP + ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Estilos custom -->
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-ink text-white font-sans antialiased overflow-x-hidden">
+
+    <!-- ===== LOADER ===== -->
+    <div id="loader" class="fixed inset-0 z-[100] bg-ink flex items-center justify-center">
+        <div class="loader-content text-center">
+            <div class="loader-bar-wrapper w-64 h-[2px] bg-white/10 rounded overflow-hidden mb-6">
+                <div id="loader-bar" class="h-full bg-gradient-to-r from-accent-violet via-accent-pink to-accent-cyan w-0"></div>
+            </div>
+            <div class="loader-counter font-display text-6xl font-bold">
+                <span id="loader-num">0</span><span class="text-white/40">%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CURSOR CUSTOM ===== -->
+    <div id="cursor-dot" class="custom-cursor-dot"></div>
+    <div id="cursor-ring" class="custom-cursor-ring"></div>
+
+    <!-- ===== NAV ===== -->
+    <nav id="nav" class="fixed top-0 left-0 right-0 z-50 px-6 py-5 flex items-center justify-between mix-blend-difference">
+        <a href="#hero" class="font-display font-bold text-xl tracking-tight hover:text-accent-cyan transition">
+            JM<span class="text-accent-violet">.</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+            <a href="#about" class="hover:text-accent-cyan transition" data-cursor="hover">Sobre mí</a>
+            <a href="#projects" class="hover:text-accent-cyan transition" data-cursor="hover">Proyectos</a>
+            <a href="#skills" class="hover:text-accent-cyan transition" data-cursor="hover">Skills</a>
+            <a href="#contact" class="hover:text-accent-cyan transition" data-cursor="hover">Contacto</a>
+        </div>
+        <a href="#contact" class="px-4 py-2 border border-white/20 rounded-full text-sm font-medium hover:bg-white hover:text-ink transition" data-cursor="hover">
+            Hablemos
+        </a>
+    </nav>
+
+    <!-- ===== HERO ===== -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <!-- Canvas Three.js para fondo 3D -->
+        <canvas id="hero-canvas" class="absolute inset-0 w-full h-full"></canvas>
+
+        <!-- Gradiente encima del canvas -->
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-ink/30 to-ink pointer-events-none"></div>
+
+        <!-- Contenido del hero -->
+        <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
+            <div class="hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-sm text-sm mb-8 opacity-0">
+                <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                Disponible para oportunidades
+            </div>
+
+            <h1 class="hero-title font-display font-bold leading-[0.95] tracking-tight text-5xl sm:text-7xl md:text-8xl lg:text-9xl mb-6">
+                <span class="block overflow-hidden">
+                    <span class="hero-line inline-block">Hola, soy</span>
+                </span>
+                <span class="block overflow-hidden">
+                    <span class="hero-line inline-block gradient-text">Jose David</span>
+                </span>
+                <span class="block overflow-hidden">
+                    <span class="hero-line inline-block">Medina</span>
+                </span>
+            </h1>
+
+            <p class="hero-sub text-lg md:text-2xl text-white/70 max-w-2xl mx-auto mb-10 opacity-0">
+                <span class="text-white">Full Stack Developer Junior</span> en Cali, Colombia.
+                Construyo interfaces modernas y backend sólido con cariño al detalle.
+            </p>
+
+            <div class="hero-cta flex flex-col sm:flex-row gap-4 items-center justify-center opacity-0">
+                <a href="#projects" class="group relative px-7 py-3.5 rounded-full bg-white text-ink font-semibold overflow-hidden" data-cursor="hover">
+                    <span class="relative z-10">Ver proyectos</span>
+                    <span class="absolute inset-0 bg-gradient-to-r from-accent-violet to-accent-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
+                </a>
+                <a href="#contact" class="px-7 py-3.5 rounded-full border border-white/25 font-semibold hover:bg-white/10 transition" data-cursor="hover">
+                    Contáctame →
+                </a>
+            </div>
+
+            <!-- Scroll indicator -->
+            <div class="hero-scroll absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0">
+                <div class="w-[1px] h-12 bg-gradient-to-b from-transparent to-white/40 mx-auto"></div>
+                <div class="text-xs uppercase tracking-widest text-white/40 mt-2">Scroll</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SOBRE MÍ ===== -->
+    <section id="about" class="relative py-32 px-6">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            <div class="about-text">
+                <div class="text-sm uppercase tracking-widest text-accent-cyan mb-4">Sobre mí</div>
+                <h2 class="font-display text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                    Construyendo cosas con <span class="gradient-text">código y café</span>
+                </h2>
+                <p class="text-white/70 text-lg leading-relaxed mb-4">
+                    Soy estudiante de <span class="text-white">Ingeniería de Sistemas</span> en la Universidad ECCI, sede Cali. Me especializo en <span class="text-white">backend con Laravel</span> pero me encanta el frontend moderno — por eso trabajo con Vue y Angular sin problema.
+                </p>
+                <p class="text-white/70 text-lg leading-relaxed mb-6">
+                    He construido desde <span class="text-white">ERPs con contabilidad de partidas dobles</span> hasta SaaS multi-tenant con disponibilidad validada. Me enfoco en código limpio, tests que importan, y software que la gente realmente quiera usar.
+                </p>
+                <div class="flex flex-wrap gap-3">
+                    <span class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm">🎯 Laravel & PHP</span>
+                    <span class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm">🎨 Vue & Angular</span>
+                    <span class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm">🏢 Multi-tenant</span>
+                    <span class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm">📊 Contabilidad</span>
+                    <span class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm">🎮 PC & Gaming</span>
+                </div>
+            </div>
+
+            <!-- Stats cards -->
+            <div class="grid grid-cols-2 gap-4 about-stats">
+                <div class="about-stat p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm hover:border-accent-violet/50 transition">
+                    <div class="font-display text-4xl md:text-5xl font-bold gradient-text mb-2">7°</div>
+                    <div class="text-sm text-white/60">Semestre actual</div>
+                </div>
+                <div class="about-stat p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm hover:border-accent-cyan/50 transition">
+                    <div class="font-display text-4xl md:text-5xl font-bold gradient-text mb-2">6</div>
+                    <div class="text-sm text-white/60">Repos públicos en GitHub</div>
+                </div>
+                <div class="about-stat p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm hover:border-accent-pink/50 transition">
+                    <div class="font-display text-4xl md:text-5xl font-bold gradient-text mb-2">149+</div>
+                    <div class="text-sm text-white/60">Tests automatizados</div>
+                </div>
+                <div class="about-stat p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm hover:border-accent-violet/50 transition">
+                    <div class="font-display text-4xl md:text-5xl font-bold gradient-text mb-2">∞</div>
+                    <div class="text-sm text-white/60">Ganas de aprender</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PROYECTOS ===== -->
+    <section id="projects" class="relative py-32 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-16 text-center projects-header">
+                <div class="text-sm uppercase tracking-widest text-accent-violet mb-4">Trabajo seleccionado</div>
+                <h2 class="font-display text-4xl md:text-6xl font-bold leading-tight">
+                    Proyectos que <span class="gradient-text">me enorgullecen</span>
+                </h2>
+            </div>
+
+            <div class="space-y-32">
+                <!-- Proyecto 1: StockFlow (el más fuerte, va primero) -->
+                <article class="project-card group grid md:grid-cols-2 gap-8 items-center">
+                    <div class="project-visual relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-br from-accent-violet/20 to-accent-cyan/20">
+                        <div class="absolute inset-0 bg-gradient-to-br from-accent-violet/30 to-transparent group-hover:scale-110 transition-transform duration-700"></div>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                            <div class="text-xs uppercase tracking-widest text-white/60 mb-2">ERP / CRM</div>
+                            <div class="text-5xl md:text-6xl font-display font-bold text-white/90 mb-3">StockFlow</div>
+                            <div class="flex gap-2 text-xs text-white/50">
+                                <span>Laravel 12</span><span>·</span><span>Vue 3</span><span>·</span><span>TypeScript</span>
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 px-2 py-1 rounded-full bg-accent-violet/20 border border-accent-violet/40 text-xs">
+                            ⭐ Featured
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <div class="text-sm text-accent-cyan mb-2">ERP/CRM integral · Full Stack</div>
+                        <h3 class="font-display text-3xl md:text-4xl font-bold mb-4">StockFlow</h3>
+                        <p class="text-white/70 mb-4 leading-relaxed">
+                            ERP/CRM completo para tiendas y PyMEs. Ventas, compras, inventario, CRM con leads y oportunidades, y <span class="text-white">contabilidad con partidas dobles automáticas</span>. Cada operación genera su asiento contable con IVA por línea.
+                        </p>
+                        <p class="text-white/50 text-sm mb-6 italic">
+                            92 tests · 282 assertions · Plan contable mexicano · 135 rutas · Dashboard con KPIs en tiempo real
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">Laravel 12</span>
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">Vue 3</span>
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">Inertia v2</span>
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">TypeScript</span>
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">Tailwind</span>
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">MySQL</span>
+                        </div>
+                        <div class="flex gap-4">
+                            <a href="https://github.com/JoseMedina-prog/stockflow" target="_blank" class="text-sm font-medium hover:text-accent-cyan transition" data-cursor="hover">Ver código →</a>
+                            <a href="https://github.com/JoseMedina-prog/stockflow#readme" target="_blank" class="text-sm font-medium hover:text-accent-cyan transition" data-cursor="hover">Ver README →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Proyecto 2: Bookify (API + Client) -->
+                <article class="project-card group grid md:grid-cols-2 gap-8 items-center">
+                    <div class="project-visual relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-br from-accent-pink/20 to-accent-violet/20 md:order-2">
+                        <div class="absolute inset-0 bg-gradient-to-br from-accent-pink/30 to-transparent group-hover:scale-110 transition-transform duration-700"></div>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                            <div class="text-xs uppercase tracking-widest text-white/60 mb-2">SaaS · Multi-tenant</div>
+                            <div class="text-5xl md:text-6xl font-display font-bold text-white/90 mb-3">Bookify Pro</div>
+                            <div class="flex gap-2 text-xs text-white/50">
+                                <span>Laravel</span><span>·</span><span>Angular 21</span>
+                            </div>
+                        </div>
+                        <div class="absolute top-4 left-4 px-2 py-1 rounded-full bg-accent-pink/20 border border-accent-pink/40 text-xs">
+                            ⭐ Featured
+                        </div>
+                    </div>
+                    <div class="project-info md:order-1">
+                        <div class="text-sm text-accent-cyan mb-2">SaaS Multi-tenant · Full Stack</div>
+                        <h3 class="font-display text-3xl md:text-4xl font-bold mb-4">Bookify Pro</h3>
+                        <p class="text-white/70 mb-4 leading-relaxed">
+                            Plataforma SaaS de reservas con <span class="text-white">aislamiento total por tenant</span>. Backend Laravel 12 + Sanctum, frontend Angular 21 con design system propio. Disponibilidad validada, dashboard, reportes con CSV, y <span class="text-white">URL pública de reservas</span> para clientes.
+                        </p>
+                        <p class="text-white/50 text-sm mb-6 italic">
+                            32 tests · 114 assertions · Roles: owner, admin, receptionist, staff, customer · Página pública de reservas
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">Laravel 12</span>
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">Angular 21</span>
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">Sanctum</span>
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">MySQL</span>
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">Tailwind 4</span>
+                        </div>
+                        <div class="flex gap-4">
+                            <a href="https://github.com/JoseMedina-prog/bookify-api" target="_blank" class="text-sm font-medium hover:text-accent-cyan transition" data-cursor="hover">Backend →</a>
+                            <a href="https://github.com/JoseMedina-prog/bookify-client" target="_blank" class="text-sm font-medium hover:text-accent-cyan transition" data-cursor="hover">Frontend →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Proyecto 3: WalletWise -->
+                <article class="project-card group grid md:grid-cols-2 gap-8 items-center">
+                    <div class="project-visual relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-br from-accent-cyan/20 to-accent-violet/20">
+                        <div class="absolute inset-0 bg-gradient-to-br from-accent-cyan/30 to-transparent group-hover:scale-110 transition-transform duration-700"></div>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                            <div class="text-xs uppercase tracking-widest text-white/60 mb-2">Fintech</div>
+                            <div class="text-5xl md:text-6xl font-display font-bold text-white/90 mb-3">WalletWise</div>
+                            <div class="flex gap-2 text-xs text-white/50">
+                                <span>Laravel 12</span><span>·</span><span>Chart.js</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <div class="text-sm text-accent-cyan mb-2">Finanzas personales · Multi-tenant</div>
+                        <h3 class="font-display text-3xl md:text-4xl font-bold mb-4">WalletWise</h3>
+                        <p class="text-white/70 mb-4 leading-relaxed">
+                            App de finanzas personales donde cada usuario registra ingresos y gastos por categoría, ve su <span class="text-white">dashboard con métricas y gráficos</span>, genera reportes filtrados y exporta todo a <span class="text-white">CSV</span>. Multi-tenant estricto: cada usuario solo ve sus datos.
+                        </p>
+                        <p class="text-white/50 text-sm mb-6 italic">
+                            25 tests · Dashboard con balance, tasa de ahorro, gráficos 6 meses · Dark/Light mode
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">Laravel 12</span>
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">Blade</span>
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">MySQL</span>
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">Chart.js</span>
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">Tailwind</span>
+                        </div>
+                        <div class="flex gap-4">
+                            <a href="https://github.com/JoseMedina-prog/walletwise" target="_blank" class="text-sm font-medium hover:text-accent-cyan transition" data-cursor="hover">Ver código →</a>
+                            <a href="https://github.com/JoseMedina-prog/walletwise#readme" target="_blank" class="text-sm font-medium hover:text-accent-cyan transition" data-cursor="hover">Ver README →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Proyecto 4: GitHub Profile (4to slot, el perfil general) -->
+                <article class="project-card group grid md:grid-cols-2 gap-8 items-center">
+                    <div class="project-visual relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-br from-accent-pink/20 to-accent-cyan/20 md:order-2">
+                        <div class="absolute inset-0 bg-gradient-to-br from-accent-pink/30 to-transparent group-hover:scale-110 transition-transform duration-700"></div>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                            <div class="text-xs uppercase tracking-widest text-white/60 mb-2">Open Source</div>
+                            <div class="text-5xl md:text-6xl font-display font-bold text-white/90 mb-3">GitHub</div>
+                            <div class="flex gap-2 text-xs text-white/50">
+                                <span>6 repos públicos</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-info md:order-1">
+                        <div class="text-sm text-accent-cyan mb-2">Más en mi GitHub</div>
+                        <h3 class="font-display text-3xl md:text-4xl font-bold mb-4">Otros proyectos y código</h3>
+                        <p class="text-white/70 mb-4 leading-relaxed">
+                            Tengo <span class="text-white">6 repos públicos</span> con distintos proyectos: desde el portafolio anterior (HTML), hasta el de perfil con skills, y todo el código abierto para quien quiera revisarlo o aprender de él.
+                        </p>
+                        <p class="text-white/50 text-sm mb-6 italic">
+                            MIT License en varios · Código limpio · Commits descriptivos · READMEs completos
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">HTML</span>
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">Vue</span>
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">PHP</span>
+                            <span class="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10">MIT</span>
+                        </div>
+                        <div class="flex gap-4">
+                            <a href="https://github.com/JoseMedina-prog?tab=repositories" target="_blank" class="text-sm font-medium hover:text-accent-cyan transition" data-cursor="hover">Ver todos los repos →</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SKILLS ===== -->
+    <section id="skills" class="relative py-32 px-6 overflow-hidden">
+        <!-- Fondo decorativo -->
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-accent-violet/5 to-transparent"></div>
+
+        <div class="max-w-6xl mx-auto relative">
+            <div class="mb-16 text-center skills-header">
+                <div class="text-sm uppercase tracking-widest text-accent-pink mb-4">Stack & herramientas</div>
+                <h2 class="font-display text-4xl md:text-6xl font-bold leading-tight">
+                    Lo que uso <span class="gradient-text">en el día a día</span>
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 skills-grid">
+                <div class="skill-item p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm hover:border-accent-violet/50 hover:-translate-y-1 transition-all duration-300">
+                    <div class="text-3xl mb-3">🛤️</div>
+                    <div class="font-display font-semibold mb-1">Laravel</div>
+                    <div class="text-xs text-white/50">Framework principal</div>
+                </div>
+                <div class="skill-item p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm hover:border-accent-cyan/50 hover:-translate-y-1 transition-all duration-300">
+                    <div class="text-3xl mb-3">🐘</div>
+                    <div class="font-display font-semibold mb-1">PHP 8.2</div>
+                    <div class="text-xs text-white/50">Backend sólido</div>
+                </div>
+                <div class="skill-item p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm hover:border-accent-pink/50 hover:-translate-y-1 transition-all duration-300">
+                    <div class="text-3xl mb-3">💚</div>
+                    <div class="font-display font-semibold mb-1">Vue 3</div>
+                    <div class="text-xs text-white/50">Inertia + Composition API</div>
+                </div>
+                <div class="skill-item p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm hover:border-accent-violet/50 hover:-translate-y-1 transition-all duration-300">
+                    <div class="text-3xl mb-3">🅰️</div>
+                    <div class="font-display font-semibold mb-1">Angular 21</div>
+                    <div class="text-xs text-white/50">Standalone + Signals</div>
+                </div>
+                <div class="skill-item p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm hover:border-accent-cyan/50 hover:-translate-y-1 transition-all duration-300">
+                    <div class="text-3xl mb-3">📘</div>
+                    <div class="font-display font-semibold mb-1">TypeScript</div>
+                    <div class="text-xs text-white/50">Tipado estricto</div>
+                </div>
+                <div class="skill-item p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm hover:border-accent-pink/50 hover:-translate-y-1 transition-all duration-300">
+                    <div class="text-3xl mb-3">🎨</div>
+                    <div class="font-display font-semibold mb-1">Tailwind CSS</div>
+                    <div class="text-xs text-white/50">Utility-first</div>
+                </div>
+                <div class="skill-item p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm hover:border-accent-violet/50 hover:-translate-y-1 transition-all duration-300">
+                    <div class="text-3xl mb-3">🗄️</div>
+                    <div class="font-display font-semibold mb-1">MySQL / SQL</div>
+                    <div class="text-xs text-white/50">Diseño + queries</div>
+                </div>
+                <div class="skill-item p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm hover:border-accent-cyan/50 hover:-translate-y-1 transition-all duration-300">
+                    <div class="text-3xl mb-3">🔧</div>
+                    <div class="font-display font-semibold mb-1">Git & GitHub</div>
+                    <div class="text-xs text-white/50">Control de versiones</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CONTACTO ===== -->
+    <section id="contact" class="relative py-32 px-6">
+        <div class="max-w-4xl mx-auto text-center contact-content">
+            <div class="text-sm uppercase tracking-widest text-accent-cyan mb-4">¿Hablamos?</div>
+            <h2 class="font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.95] mb-8">
+                Construyamos<br />
+                <span class="gradient-text">algo increíble</span>
+            </h2>
+            <p class="text-lg md:text-xl text-white/70 max-w-2xl mx-auto mb-10">
+                Estoy abierto a oportunidades junior, prácticas, proyectos freelance o simplemente charlar sobre tecnología.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 items-center justify-center mb-16">
+                <a href="mailto:josemedinaprog@gmail.com" class="group relative px-8 py-4 rounded-full bg-white text-ink font-semibold overflow-hidden" data-cursor="hover">
+                    <span class="relative z-10">Envíame un email</span>
+                    <span class="absolute inset-0 bg-gradient-to-r from-accent-violet to-accent-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
+                </a>
+                <a href="https://github.com/JoseMedina-prog" target="_blank" class="px-8 py-4 rounded-full border border-white/25 font-semibold hover:bg-white/10 transition" data-cursor="hover">
+                    Ver GitHub →
+                </a>
+            </div>
+
+            <!-- Socials -->
+            <div class="flex items-center justify-center gap-6 text-white/50">
+                <a href="#" class="hover:text-white transition" data-cursor="hover" aria-label="GitHub">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.4 3-.405 1.02.005 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                </a>
+                <a href="#" class="hover:text-white transition" data-cursor="hover" aria-label="LinkedIn">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                </a>
+                <a href="#" class="hover:text-white transition" data-cursor="hover" aria-label="Twitter / X">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="py-8 px-6 border-t border-white/5 text-center text-sm text-white/40">
+        <p>© 2026 Jose David Medina · Hecho con <span class="text-accent-pink">♥</span> en Cali, Colombia</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="cursor.js"></script>
+    <script src="three-bg.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

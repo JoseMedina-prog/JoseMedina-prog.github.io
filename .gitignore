@@ -1,0 +1,11 @@
+# Si usas VS Code con Live Server
+.vscode/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Si más adelante metes build tools
+node_modules/
+dist/
+.env
