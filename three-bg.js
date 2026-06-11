@@ -1,15 +1,17 @@
 /* ============================================
    FONDO 3D CON THREE.JS
-   Geometría wireframe que reacciona al mouse
+   - Icosahedron wireframe (violeta)
+   - Torus (cyan)
+   - Partículas flotantes
+   - Reacción al mouse + parallax al scroll
    ============================================ */
 
 (function () {
     'use strict';
 
     const canvas = document.getElementById('hero-canvas');
-    if (!canvas) return;
+    if (!canvas || typeof THREE === 'undefined') return;
 
-    // === Setup ===
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
         75,
@@ -27,55 +29,62 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // === Geometría: Icosahedron wireframe (la "estrella" 3D) ===
-    const geometry = new THREE.IcosahedronGeometry(2.2, 1);
-
-    // Material wireframe con color morado
-    const material = new THREE.MeshBasicMaterial({
-        color: 0x8b5cf6,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.6,
-    });
-
-    const icosahedron = new THREE.Mesh(geometry, material);
+    // Icosahedron wireframe
+    const icosahedron = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(2.2, 1),
+        new THREE.MeshBasicMaterial({
+            color: 0x8b5cf6,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.6,
+        })
+    );
     scene.add(icosahedron);
 
-    // === Segundo objeto: torus más pequeño, color cyan ===
-    const torusGeometry = new THREE.TorusGeometry(1.4, 0.02, 16, 100);
-    const torusMaterial = new THREE.MeshBasicMaterial({
-        color: 0x06b6d4,
-        transparent: true,
-        opacity: 0.5,
-    });
-    const torus = new THREE.Mesh(torusGeometry, torusMaterial);
+    // Torus cyan
+    const torus = new THREE.Mesh(
+        new THREE.TorusGeometry(1.4, 0.02, 16, 100),
+        new THREE.MeshBasicMaterial({
+            color: 0x06b6d4,
+            transparent: true,
+            opacity: 0.5,
+        })
+    );
     scene.add(torus);
 
-    // === Partículas flotantes de fondo ===
+    // Tercer objeto: anillo rosa para más color
+    const ringPink = new THREE.Mesh(
+        new THREE.TorusGeometry(1.8, 0.01, 16, 100),
+        new THREE.MeshBasicMaterial({
+            color: 0xec4899,
+            transparent: true,
+            opacity: 0.35,
+        })
+    );
+    ringPink.rotation.x = Math.PI / 3;
+    scene.add(ringPink);
+
+    // Partículas
     const particlesGeometry = new THREE.BufferGeometry();
     const particlesCount = 500;
     const positions = new Float32Array(particlesCount * 3);
-
     for (let i = 0; i < particlesCount * 3; i++) {
         positions[i] = (Math.random() - 0.5) * 15;
     }
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-    particlesGeometry.setAttribute(
-        'position',
-        new THREE.BufferAttribute(positions, 3)
+    const particles = new THREE.Points(
+        particlesGeometry,
+        new THREE.PointsMaterial({
+            color: 0xffffff,
+            size: 0.015,
+            transparent: true,
+            opacity: 0.6,
+        })
     );
-
-    const particlesMaterial = new THREE.PointsMaterial({
-        color: 0xffffff,
-        size: 0.015,
-        transparent: true,
-        opacity: 0.6,
-    });
-
-    const particles = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particles);
 
-    // === Mouse tracking ===
+    // Mouse
     const mouse = { x: 0, y: 0 };
     const targetRotation = { x: 0, y: 0 };
 
@@ -84,32 +93,38 @@
         mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
     });
 
-    // === Resize handler ===
+    // Scroll parallax
+    let scrollY = 0;
+    const updateScroll = () => { scrollY = window.scrollY; };
+    window.addEventListener('scroll', updateScroll, { passive: true });
+
+    // Resize
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // === Animation loop ===
     function animate() {
         requestAnimationFrame(animate);
 
-        // Rotación base
         icosahedron.rotation.x += 0.002;
         icosahedron.rotation.y += 0.003;
-
         torus.rotation.x += 0.004;
         torus.rotation.y -= 0.002;
+        ringPink.rotation.z += 0.003;
 
-        // Reacción suave al mouse
         targetRotation.x = mouse.y * 0.3;
         targetRotation.y = mouse.x * 0.3;
-
         icosahedron.rotation.x += (targetRotation.x - icosahedron.rotation.x) * 0.05;
         icosahedron.rotation.y += (targetRotation.y - icosahedron.rotation.y) * 0.05;
 
-        // Partículas rotan lento
+        // Parallax con scroll: la cámara se aleja/acerca al hacer scroll
+        const scrollFactor = scrollY * 0.0015;
+        camera.position.z = 5 + scrollFactor * 2;
+        camera.position.y = -scrollFactor * 1.5;
+
+        // Las partículas también se mueven un poco
         particles.rotation.y += 0.0005;
         particles.rotation.x += 0.0002;
 

@@ -14,12 +14,15 @@ html {
 
 body {
     cursor: none; /* Ocultar cursor nativo */
+    overflow-x: hidden;
 }
 
 @media (max-width: 768px) {
     body { cursor: auto; }
     .custom-cursor-dot,
-    .custom-cursor-ring { display: none; }
+    .custom-cursor-ring,
+    .custom-cursor-text,
+    .mouse-glow { display: none; }
 }
 
 /* ===== Gradiente de texto ===== */
@@ -49,7 +52,7 @@ body {
     pointer-events: none;
     z-index: 9999;
     transform: translate(-50%, -50%);
-    transition: width 0.2s, height 0.2s, background 0.2s;
+    transition: width 0.2s, height 0.2s, background 0.2s, opacity 0.2s;
     mix-blend-mode: difference;
 }
 
@@ -64,20 +67,72 @@ body {
     pointer-events: none;
     z-index: 9998;
     transform: translate(-50%, -50%);
-    transition: width 0.3s, height 0.3s, border-color 0.3s, background 0.3s;
+    transition: width 0.3s, height 0.3s, border-color 0.3s, background 0.3s, opacity 0.3s;
+}
+
+.custom-cursor-text {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 6px 14px;
+    background: white;
+    color: #0a0a0f;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Space Grotesk', sans-serif;
+    pointer-events: none;
+    z-index: 9997;
+    opacity: 0;
+    white-space: nowrap;
+    will-change: transform, opacity;
+}
+
+.custom-cursor-text.active {
+    opacity: 1;
 }
 
 .custom-cursor-dot.hover {
-    width: 16px;
-    height: 16px;
+    width: 6px;
+    height: 6px;
     background: #8b5cf6;
+    opacity: 0;
 }
 
 .custom-cursor-ring.hover {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     border-color: #8b5cf6;
-    background: rgba(139, 92, 246, 0.1);
+    background: rgba(139, 92, 246, 0.08);
+}
+
+/* ===== Mouse glow (luz que sigue al cursor) ===== */
+.mouse-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.05) 40%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.4s;
+    will-change: transform;
+}
+
+/* ===== Scroll progress bar ===== */
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, #8b5cf6 0%, #ec4899 50%, #06b6d4 100%);
+    z-index: 200;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.6);
+    transition: width 0.1s ease-out;
 }
 
 /* ===== Loader ===== */
@@ -94,6 +149,15 @@ body {
 #loader-bar {
     transition: width 0.1s linear;
     box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
+}
+
+.loader-counter {
+    background: linear-gradient(135deg, #8b5cf6, #ec4899, #06b6d4);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 3s ease infinite;
 }
 
 /* ===== Hero ===== */
@@ -126,20 +190,35 @@ body {
 }
 
 /* ===== Project cards hover ===== */
-/* Por defecto visible — GSAP se encarga de animar la entrada.
-   Si JS no carga o falla, el contenido sigue siendo accesible. */
 .project-card {
     opacity: 1;
     transform: translateY(0);
 }
 
-/* Cuando GSAP está listo, marca los cards para animar */
 html.gsap-ready .project-card {
     opacity: 0;
 }
 
+html.gsap-ready .projects-header,
+html.gsap-ready .skills-header {
+    opacity: 0;
+    transform: translateY(40px);
+}
+
+html.gsap-ready .skill-item {
+    opacity: 0;
+}
+
+html.gsap-ready .contact-content > * {
+    opacity: 0;
+    transform: translateY(30px);
+}
+
 .project-visual {
     position: relative;
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition: box-shadow 0.5s ease;
 }
 
 .project-visual::after {
@@ -148,10 +227,30 @@ html.gsap-ready .project-card {
     inset: 0;
     background: linear-gradient(180deg, transparent 60%, rgba(10, 10, 15, 0.5));
     pointer-events: none;
-    pointer-events: none;
 }
 
-/* ===== Magnetic button effect (lo agregamos con JS) ===== */
+/* Glow en project visuals al hacer hover */
+.project-card:hover .project-visual {
+    box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.3),
+                0 0 0 1px rgba(139, 92, 246, 0.2);
+}
+
+/* Reveal mask para project visuals (al entrar en viewport) */
+html.gsap-ready .project-visual-inner {
+    transform: scale(1.3);
+    opacity: 0;
+}
+
+.project-visual-inner {
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    will-change: transform;
+}
+
+.project-card:hover .project-visual-inner {
+    transform: scale(1.1);
+}
+
+/* ===== Magnetic button effect ===== */
 .magnetic {
     transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -166,15 +265,127 @@ html.gsap-ready .project-card {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== Glow effect para items hover ===== */
-.skill-item:hover {
-    box-shadow: 0 0 30px rgba(139, 92, 246, 0.15);
+/* ===== Glow effect para skill items ===== */
+.skill-item {
+    position: relative;
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+                border-color 0.4s ease,
+                box-shadow 0.4s ease;
+    will-change: transform;
 }
 
-/* ===== Marquee sutil (opcional, para el futuro) ===== */
+.skill-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%),
+                rgba(139, 92, 246, 0.15) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+}
+
+.skill-item:hover::before {
+    opacity: 1;
+}
+
+.skill-item:hover {
+    box-shadow: 0 10px 40px -10px rgba(139, 92, 246, 0.4);
+    border-color: rgba(139, 92, 246, 0.5);
+}
+
+/* ===== Texto animado (split) ===== */
+.split-char {
+    display: inline-block;
+    will-change: transform, opacity;
+}
+
+html.gsap-ready .split-word {
+    overflow: hidden;
+    display: inline-block;
+}
+
+/* ===== Reveal mask helper ===== */
+.reveal-mask {
+    overflow: hidden;
+    display: block;
+}
+
+/* ===== About stats number glow ===== */
+.about-stat {
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s;
+}
+
+.about-stat:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -15px rgba(139, 92, 246, 0.3);
+}
+
+/* ===== Section divider line (sutil) ===== */
+.section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    margin: 0 auto;
+    max-width: 6xl;
+}
+
+/* ===== Hero badge pulse ===== */
+.hero-badge {
+    position: relative;
+}
+
+.hero-badge::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.hero-badge:hover::before {
+    opacity: 1;
+}
+
+/* ===== Contact button shine ===== */
+.contact-cta-primary {
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-cta-primary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s;
+}
+
+.contact-cta-primary:hover::after {
+    left: 100%;
+}
+
+/* ===== Social icon glow on hover ===== */
+.social-icon {
+    display: inline-flex;
+    transition: transform 0.3s, color 0.3s;
+}
+
+.social-icon:hover {
+    transform: translateY(-3px);
+    color: #8b5cf6;
+}
+
+/* ===== Reduced motion ===== */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
         animation-duration: 0.01ms !important;
         transition-duration: 0.01ms !important;
     }
+    .mouse-glow { display: none; }
 }
